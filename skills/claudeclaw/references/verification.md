@@ -62,7 +62,7 @@
 | 단계 | 직후 확인 | "됐다" 신호 |
 |------|-----------|-------------|
 | B. Bun | `bun --version` | 버전 출력. 안 나오면: ① 터미널/PowerShell 새로 열기 ② (드물게) 윈도우에서 WSL+Git Bash 충돌이면 `references/manual-guide.md` 윈도우 섹션의 `CLAUDE_CODE_GIT_BASH_PATH` 안내 |
-| C. 플러그인 | `installed_plugins.json` 다시 Read | `telegram@claude-plugins-official` 등장 |
+| C. 플러그인 | `installed_plugins.json` 다시 Read | `telegram@claude-plugins-official` 등장. 단, 설치돼도 `/reload-plugins` 전에는 `/telegram:configure` 가 "Unknown command"다 → reload 필수, 안 되면 재시작 |
 | D. 토큰 | `.env` Read | `TELEGRAM_BOT_TOKEN=` 줄 등장 (값 비노출) |
 | E. 재시작 | (재실행된 세션에서) 너의 도구에 telegram reply 있나 | 있으면 채널 활성 |
 | F. 페어링 | `access.json` Read | `allowFrom` 에 항목이 새로 생김 |

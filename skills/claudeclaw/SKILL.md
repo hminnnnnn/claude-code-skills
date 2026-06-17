@@ -109,9 +109,13 @@ powershell -c "irm bun.sh/install.ps1 | iex"
 ```
 /reload-plugins
 ```
-   범위를 물으면 `user`(추천) 선택.
-③ `installed_plugins.json` 을 다시 Read 해서 `telegram@claude-plugins-official` 가 생겼는지 확인.
-   없으면 → "`/plugin marketplace update claude-plugins-official` 먼저 실행 후 다시" 안내.
+   - 범위를 물으면 `user`(추천) 선택.
+   - **`/reload-plugins` 는 반드시 실행한다.** 이걸 해야 다음 D단계의 `/telegram:configure` 명령이 *켜진다*(공식 문서: "run /reload-plugins to activate the plugin's configure command"). 빠뜨리면 D에서 "Unknown command"가 난다.
+   - **"플러그인을 찾을 수 없음(not found in any marketplace)"** 이 나오면 마켓플레이스부터 추가/갱신 후 설치를 다시 한다:
+     - 처음이면 → `/plugin marketplace add anthropics/claude-plugins-official`
+     - 이미 있으면 갱신 → `/plugin marketplace update claude-plugins-official`
+③ `installed_plugins.json` 을 다시 Read 해서 `telegram@claude-plugins-official` 가 생겼는지 확인한다.
+   설치가 확인됐고 `/reload-plugins` 까지 했으면 D로 간다. (설치가 안 보이면 위 마켓플레이스 안내로 되돌린다.)
 
 ### D. 토큰 등록
 
@@ -120,6 +124,10 @@ powershell -c "irm bun.sh/install.ps1 | iex"
 ```
 /telegram:configure 여기에_본인_토큰_붙여넣기
 ```
+   ⚠️ 이 명령이 **"Unknown command: /telegram:configure"** 로 나오면, 명령이 틀린 게 아니라
+   C단계 플러그인이 아직 로드되지 않은 것이다. 순서대로: ① `/reload-plugins` 다시 실행 → 다시 시도,
+   ② 그래도면 Claude Code를 종료(`/exit`)했다 다시 켜고 `/claudeclaw` 재실행(0단계 진단이 D부터
+   이어준다) → 다시 시도. (재시작하면 플러그인 명령이 확실히 등록된다.)
 ③ `~/.claude/channels/telegram/.env` 를 Read 해서 `TELEGRAM_BOT_TOKEN=` 줄이 생겼는지 확인(**값은 출력하지 않기**). 생겼으면 "토큰 등록 확인했어요" 라고 보고.
 
 ### E. `--channels` 로 다시 켜기 (가장 중요 — 세션이 한 번 꺼져요)
@@ -180,7 +188,8 @@ claude --channels plugin:telegram@claude-plugins-official
 | 증상 | 원인 → 해결 |
 |------|-------------|
 | `bun: command not found` | 설치 후 창을 안 새로 엶 → 터미널/PowerShell 완전히 닫고 새로 열기 |
-| 플러그인 설치 실패 | `/plugin marketplace update claude-plugins-official` 후 재시도 (인터넷 확인) |
+| 플러그인 "not found in any marketplace" | 처음이면 `/plugin marketplace add anthropics/claude-plugins-official`, 아니면 `/plugin marketplace update claude-plugins-official` 후 설치 재시도 (인터넷 확인) |
+| `Unknown command: /telegram:configure` (또는 `/telegram:access`) | 명령 오타가 아니라 플러그인 미로드 → `/reload-plugins` 실행, 그래도 안 되면 Claude Code 재시작 후 `/claudeclaw` 재실행. 그 전에 C단계(플러그인 설치)를 마쳤는지 확인 |
 | 봇이 페어링 코드를 안 줌 | **`--channels` 누락 1순위** → `/exit` 후 `claude --channels plugin:telegram@claude-plugins-official` 로 재시작, 그다음 봇에 메시지 다시 |
 | 봇이 "입력 중…"만 뜨고 답이 없음 | `--channels` 없이 켰거나 일시적 오류 → `--channels` 로 켰는지 확인 후 세션 재시작 |
 | `pair` 실패 | 코드 오타/만료 → 봇에 메시지 다시 보내 새 코드 받기 |

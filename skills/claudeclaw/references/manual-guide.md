@@ -80,9 +80,14 @@ bun --version
 ```
 
 - 설치 범위(scope)를 물으면 `user`(모든 프로젝트에서 사용 — 추천) 또는 `project`(현재 프로젝트만) 중 선택합니다.
+- **`/reload-plugins` 는 꼭 실행하세요.** 공식 문서에 따르면 이 명령이 다음 단계의
+  `/telegram:configure` 명령을 *활성화*합니다("activate the plugin's configure command").
+  빠뜨리면 3단계에서 `Unknown command: /telegram:configure` 가 납니다.
 - 아직 **프리뷰(Preview)** 기능이라 일부 불안정할 수 있습니다.
 
-> **"플러그인을 찾을 수 없음" 에러:** `/plugin marketplace update claude-plugins-official` 을 먼저 실행해 목록을 갱신한 뒤 다시 시도하세요.
+> **"플러그인을 찾을 수 없음(not found in any marketplace)" 에러:** 마켓플레이스가 없거나 오래된 것입니다.
+> 처음이면 `/plugin marketplace add anthropics/claude-plugins-official` 로 추가하고, 이미 있으면
+> `/plugin marketplace update claude-plugins-official` 로 갱신한 뒤 설치를 다시 시도하세요.
 
 ---
 
@@ -96,6 +101,10 @@ bun --version
 
 `123456789:AAH...` 자리에 본인 토큰을 붙여넣으세요. 이 명령은 토큰을
 `~/.claude/channels/telegram/.env` 파일에 저장합니다(권한 600).
+
+> **`Unknown command: /telegram:configure` 가 뜨면?** 명령이 틀린 게 아니라 2단계 플러그인이
+> 아직 로드되지 않은 것입니다. `/reload-plugins` 를 실행하고 다시 시도하세요. 그래도 안 되면
+> Claude Code를 종료(`/exit`)했다 다시 켜면 플러그인 명령이 확실히 등록됩니다.
 
 ---
 
@@ -204,7 +213,8 @@ claude --channels plugin:telegram@claude-plugins-official
 | 증상 | 가장 흔한 원인 → 해결 |
 |------|----------------------|
 | `bun: command not found` | Bun 설치 후 터미널/PowerShell을 새로 열지 않음 → 창을 완전히 닫고 새로 열기 |
-| 플러그인 설치 실패 | 인터넷 확인 후 `/plugin marketplace update claude-plugins-official` → 재시도 |
+| 플러그인 "not found in any marketplace" | 처음이면 `/plugin marketplace add anthropics/claude-plugins-official`, 아니면 `/plugin marketplace update claude-plugins-official` → 설치 재시도 (인터넷 확인) |
+| `Unknown command: /telegram:configure` (또는 `/telegram:access`) | 명령 오타가 아니라 플러그인 미로드 → `/reload-plugins` 실행, 안 되면 Claude Code 재시작. 2단계 설치를 마쳤는지도 확인 |
 | 봇이 페어링 코드를 안 줌 | `--channels` 플래그 누락이 1순위 → `/exit` 후 `claude --channels plugin:telegram@claude-plugins-official` 로 재시작. 그 다음 봇에 메시지 다시 |
 | `/telegram:access pair` 실패 | 코드 오타 또는 만료 → 봇에 메시지 다시 보내 새 코드 받기 |
 | 페어링 후에도 메시지가 안 옴 | 재시작 시 `--channels` 플래그를 넣었는지 / 토큰이 맞는지(`/telegram:configure`로 재등록) 확인 |
