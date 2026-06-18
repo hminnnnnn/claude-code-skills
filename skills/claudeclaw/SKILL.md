@@ -107,32 +107,33 @@ powershell -c "irm bun.sh/install.ps1 | iex"
 ### C. 플러그인 설치
 
 ① "이제 클로드에 텔레그램 기능을 더해요."
-② 입력창에 차례로(한 줄씩):
+② 입력창에 **두 줄을 차례로 입력한다 — 둘 다 필수.** (수강생에게 안내할 때 이 두 줄을 **반드시 함께** 보여준다. 절대 `/reload-plugins` 를 빼고 install만 보여주지 말 것.)
 ```
 /plugin install telegram@claude-plugins-official
 ```
 ```
 /reload-plugins
 ```
-   - 범위를 물으면 `user`(추천) 선택.
-   - **`/reload-plugins` 는 반드시 실행한다.** 이걸 해야 다음 D단계의 `/telegram:configure` 명령이 *켜진다*(공식 문서: "run /reload-plugins to activate the plugin's configure command"). 빠뜨리면 D에서 "Unknown command"가 난다.
+   - ⚠️ **둘째 줄 `/reload-plugins` 가 핵심이다.** 이게 플러그인의 `/telegram:configure` 명령을 *켠다*(공식 문서: "run /reload-plugins to activate the plugin's configure command"). **이걸 빼면 D단계에서 100% "Unknown command: /telegram:configure" 가 난다.** install 출력에도 `Run /reload-plugins to apply` 라고 뜨니, 그 안내대로 꼭 실행하게 한다.
+   - 범위(scope)를 물으면 `user`(추천) 선택.
    - **"플러그인을 찾을 수 없음(not found in any marketplace)"** 이 나오면 마켓플레이스부터 추가/갱신 후 설치를 다시 한다:
      - 처음이면 → `/plugin marketplace add anthropics/claude-plugins-official`
      - 이미 있으면 갱신 → `/plugin marketplace update claude-plugins-official`
 ③ `installed_plugins.json` 을 다시 Read 해서 `telegram@claude-plugins-official` 가 생겼는지 확인한다.
-   설치가 확인됐고 `/reload-plugins` 까지 했으면 D로 간다. (설치가 안 보이면 위 마켓플레이스 안내로 되돌린다.)
+   **설치 확인 + `/reload-plugins` 실행까지 둘 다 됐을 때만 D로 간다.** (설치가 안 보이면 위 마켓플레이스 안내로 되돌린다.)
 
 ### D. 토큰 등록
 
-① "A에서 받은 봇 비밀번호(토큰)를 클로드에 알려줘요."
-② 입력창에 (토큰을 명령 뒤에 직접 붙여서):
+① **먼저 확인(중요):** C에서 `/plugin install` **다음에 `/reload-plugins` 까지** 입력했는가?
+   안 했으면 "토큰 등록 전에 `/reload-plugins` 를 먼저 입력하세요"라고 안내하고 그것부터 시킨다.
+   (이 한 줄을 빠뜨리는 게 `/telegram:configure` "Unknown command"의 1순위 원인이다.)
+② "A에서 받은 봇 비밀번호(토큰)를 클로드에 알려줘요." — 입력창에 (토큰을 명령 뒤에 직접 붙여서):
 ```
 /telegram:configure 여기에_본인_토큰_붙여넣기
 ```
-   ⚠️ 이 명령이 **"Unknown command: /telegram:configure"** 로 나오면, 명령이 틀린 게 아니라
-   C단계 플러그인이 아직 로드되지 않은 것이다. 순서대로: ① `/reload-plugins` 다시 실행 → 다시 시도,
-   ② 그래도 안 되면 Claude Code를 종료(`/exit`)했다 다시 켜고 `/claudeclaw` 재실행(0단계 진단이 D부터
-   이어준다) → 다시 시도. (재시작하면 플러그인 명령이 확실히 등록된다.)
+   ⚠️ 그래도 **"Unknown command: /telegram:configure"** 가 나오면, 명령이 틀린 게 아니라 플러그인이
+   아직 로드 안 된 것: `/reload-plugins` 다시 실행 → 다시 시도. 그래도 안 되면 Claude Code 종료(`/exit`)
+   후 다시 켜고 `/claudeclaw` 재실행(0단계 진단이 D부터 이어준다).
 ③ `~/.claude/channels/telegram/.env` 를 Read 해서 `TELEGRAM_BOT_TOKEN=` 줄이 생겼는지 확인(**값은 출력하지 않기**). 생겼으면 "토큰 등록 확인했어요" 라고 보고.
 
 ### E. 채널 받기 — **새 터미널을 하나 더 열어서** 켠다 (지금 이 창은 닫지 마세요)
