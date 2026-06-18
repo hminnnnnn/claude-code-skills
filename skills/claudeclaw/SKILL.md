@@ -24,6 +24,7 @@ description: "텔레그램 봇을 지금 이 Claude Code 세션에 연결해 주
    됐으면 다음으로, 안 됐으면 무엇이 문제인지 근거를 갖고 안내한다.
 5. **추측으로 "됐어요" 하지 않는다.** 항상 확인 후 "확인했어요"라고 말한다.
 6. **따뜻하게.** 처음 하는 사람이다. 막혀도 괜찮다고 안심시키고, 작은 성공마다 짚어준다.
+7. **OS에 맞는 것만 보여준다.** 시작 시 사용자 OS를 확인하고(이 강의 수강생은 대부분 윈도우), 이후 명령·경로는 **그 OS의 것 하나만** 제시한다. 다른 OS의 명령을 함께 보여주지 않는다 — 비개발자에게는 "나는 둘 중 뭘 치지?"가 혼란이다. (이 문서엔 윈도우/맥·리눅스 명령이 같이 적혀 있지만, 그건 네가 고르라고 둔 것이지 수강생에게 둘 다 보여주라는 뜻이 아니다.)
 
 말투는 한국어, 친근한 해요체. 영어 용어가 꼭 필요하면 괄호로 짧게 풀어준다.
 
@@ -40,6 +41,10 @@ description: "텔레그램 봇을 지금 이 Claude Code 세션에 연결해 주
 
 스킬이 실행되면 **말을 길게 하기 전에**, 조용히 현재 상태부터 점검한다. 이렇게 하면
 세션을 다시 켠 뒤 `/claudeclaw`를 또 실행해도 **멈춘 지점부터 이어서** 진행할 수 있다.
+
+**0-1. 먼저 OS를 확인한다.** 이후 모든 안내에서 그 OS의 명령만 보여주기 위해서다. 환경 정보로
+알 수 있으면 그대로 쓰고, 불확실하면 Bash `uname`(맥/리눅스면 값이 나옴) 또는 사용자에게
+"윈도우 쓰시죠?" 한 번만 가볍게 확인한다. (대부분 윈도우다.)
 
 점검 항목(자세한 명령·판정은 `references/verification.md` 참고):
 
@@ -96,7 +101,7 @@ description: "텔레그램 봇을 지금 이 Claude Code 세션에 연결해 주
 powershell -c "irm bun.sh/install.ps1 | iex"
 ```
    설치 후 **PowerShell 창을 완전히 닫고 새로 열어야** 인식됩니다.
-   (맥/리눅스: `curl -fsSL https://bun.sh/install | bash` 후 터미널 새로 열기)
+   - (수강생이 맥/리눅스일 때만, 위 대신) `curl -fsSL https://bun.sh/install | bash` 후 터미널 새로 열기
 ③ Bash `bun --version` 으로 확인. 버전이 나오면 통과. `command not found` 면 → "창을 새로 열었나요?" 안내(새 창에서 다시).
 
 ### C. 플러그인 설치
@@ -195,7 +200,7 @@ if (-not (Select-String -Path $PROFILE -Pattern 'function telegram' -Quiet)) {
 . $PROFILE
 ```
    - 첫 줄(실행정책)이 필요한 이유: 윈도우 기본(Windows PowerShell 5.1)은 프로필 스크립트 로딩을 막아 함수가 안 켜진다. `CurrentUser` 스코프라 관리자 권한은 불필요.
-   - 맥/리눅스: `echo "alias telegram='claude --channels plugin:telegram@claude-plugins-official --dangerously-skip-permissions'" >> ~/.zshrc` 후 `source ~/.zshrc` (bash면 `~/.bashrc`).
+   - (수강생이 맥/리눅스일 때만, 위 PowerShell 블록 대신) `echo "alias telegram='claude --channels plugin:telegram@claude-plugins-official --dangerously-skip-permissions'" >> ~/.zshrc` 후 `source ~/.zshrc` (bash면 `~/.bashrc`).
 ③ **새 터미널 창**을 열고 `telegram` 을 입력해 claude가 채널과 함께 켜지는지 확인한다. 안 켜지면 → `references/manual-guide.md` 의 "별칭 트러블슈팅"(실행정책/프로필 경로).
 
 > ⚠️ **이 별칭은 `--dangerously-skip-permissions` 가 들어 있어 모든 도구 실행을 자동 승인한다**(폰에서 멈춤 없이 쓰기 위함). 편하지만, 폰/오발/프롬프트 인젝션 명령이 파일 삭제·임의 명령까지 자동 실행할 수 있다는 뜻이다 — 신뢰하는 본인 PC에서만 권장. **더 안전하게** 쓰려면 별칭에서 이 플래그만 빼면 된다: 텔레그램 플러그인은 민감 작업 때 폰으로 🔐 Allow/Deny 버튼을 보내는 권한 릴레이를 지원한다(v2.1.81+).
