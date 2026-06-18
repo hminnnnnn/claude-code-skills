@@ -246,7 +246,68 @@ claude --channels plugin:telegram@claude-plugins-official
 
 ---
 
+## 다음부터 한 단어로 켜기 — `telegram` 별칭 (선택)
+
+매번 `claude --channels plugin:telegram@claude-plugins-official` 를 입력하는 건 길고 헷갈립니다.
+`telegram` 한 단어로 켜지게 만들어 둘 수 있어요.
+
+> 윈도우 PowerShell의 `Set-Alias` 는 **인자 붙은 명령에는 쓸 수 없습니다**(공식 문서: 인자가 있으면
+> 함수를 만들고 그 함수에 별칭을 걸라). 그래서 `$PROFILE`(프로필 스크립트)에 **함수**로 등록합니다.
+
+### 윈도우 (PowerShell) — 한 번만
+
+PowerShell 창에 아래를 통째로 붙여넣습니다(관리자 권한 불필요):
+
+```powershell
+# 1) 프로필 스크립트가 켜지도록 허용 (CurrentUser 범위 — 관리자 불필요)
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
+# 2) 프로필 파일 생성(없으면) + telegram 함수 추가(중복 방지)
+if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
+if (-not (Select-String -Path $PROFILE -Pattern 'function telegram' -Quiet)) {
+  Add-Content $PROFILE 'function telegram { claude --channels plugin:telegram@claude-plugins-official --dangerously-skip-permissions @args }'
+}
+# 3) 지금 창에 즉시 적용
+. $PROFILE
+```
+
+이제 **새 PowerShell 창**을 열고 `telegram` 을 입력하면 채널과 함께 켜집니다.
+
+> **왜 1번(실행정책)이 필요한가:** 윈도우 기본 PowerShell(5.1)의 기본 정책은 `Restricted` 라
+> 프로필 스크립트(.ps1) 로딩 자체를 막습니다(그러면 함수가 안 켜짐). `CurrentUser` 범위로
+> `RemoteSigned` 를 주면 본인이 만든 로컬 스크립트가 켜집니다(관리자 권한 불필요). PowerShell 7은
+> 기본이 `RemoteSigned` 라 이 줄이 없어도 되지만, 넣어도 무해합니다.
+
+### macOS / Linux — 한 번만
+
+```bash
+echo "alias telegram='claude --channels plugin:telegram@claude-plugins-official --dangerously-skip-permissions'" >> ~/.zshrc
+source ~/.zshrc
+```
+(bash를 쓰면 `~/.zshrc` 대신 `~/.bashrc`.)
+
+### ⚠️ 권한 자동 승인에 대해
+
+이 별칭에는 `--dangerously-skip-permissions` 가 들어 있어, 연결된 동안 **모든 도구 실행을 자동
+승인**합니다. 폰에서 멈춤 없이 일을 시키기 위함이지만, 폰에서 보낸(혹은 잘못 보낸·프롬프트
+인젝션) 명령이 파일 삭제·임의 명령까지 자동 실행될 수 있다는 뜻입니다. **신뢰하는 본인 PC에서만**
+쓰세요.
+
+더 안전하게 쓰려면 별칭에서 `--dangerously-skip-permissions` 만 빼면 됩니다. 텔레그램 플러그인은
+민감한 작업을 하려 할 때 **폰으로 🔐 Allow/Deny 버튼**을 보내주는 권한 릴레이를 지원합니다
+(Claude Code v2.1.81 이상). 그러면 모든 걸 자동 승인하지 않고도 폰에서 그때그때 승인할 수 있습니다.
+
+### 별칭 트러블슈팅
+
+| 증상 | 원인 → 해결 |
+|------|-------------|
+| `telegram` 입력 시 "용어가 인식되지 않습니다" | 새 창을 안 열었거나 프로필 미적용 → 새 PowerShell 창에서 다시. 그래도면 위 1~3 블록을 다시 실행 |
+| 새 창에서 함수가 사라짐 | 실행정책이 `Restricted` → `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force` 실행 후 새 창 |
+| PowerShell 5.1과 7을 섞어 씀 | 프로필 경로가 버전마다 다름 → 평소 쓰는 PowerShell에서 위 블록을 실행 |
+
+---
+
 ## 더 알아보기
 
 - 그룹 채팅, 여러 사용자 허용, 멘션 설정 등 고급 접근 제어 → 공식 플러그인 `ACCESS.md`
+- 권한 릴레이(폰에서 🔐 Allow/Deny) 등 채널 동작 → Anthropic "Channels reference" 문서
 - 텔레그램 외 채널(Discord 등) → Anthropic "Build your own channel" 문서

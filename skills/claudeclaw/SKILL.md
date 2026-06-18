@@ -181,6 +181,25 @@ claude --channels plugin:telegram@claude-plugins-official
    이어서 실제 작업도 권한다: *"지금 폴더에 hello.txt 만들어줘 처럼 일도 시켜보세요."*
    파일 상태가 다 맞아도 **이 왕복이 한 번 성공해야** 완료로 본다.
 
+### I. (선택) 다음부터 한 단어로 켜기 — `telegram` 별칭
+
+① "다음에도 `claude --channels plugin:telegram@claude-plugins-official` 를 매번 치긴 길고 헷갈리죠. `telegram` 한 단어로 켜지게 만들어 둘까요?" 라고 제안한다.
+   - 윈도우 PowerShell의 `Set-Alias` 는 **인자 붙은 명령을 못 만든다**(공식 문서). 그래서 `$PROFILE` 에 **함수**로 등록한다.
+② **윈도우(PowerShell)** — 아래 한 덩어리를 PowerShell 창에 붙여넣게 한다(관리자 권한 불필요):
+```
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
+if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force | Out-Null }
+if (-not (Select-String -Path $PROFILE -Pattern 'function telegram' -Quiet)) {
+  Add-Content $PROFILE 'function telegram { claude --channels plugin:telegram@claude-plugins-official --dangerously-skip-permissions @args }'
+}
+. $PROFILE
+```
+   - 첫 줄(실행정책)이 필요한 이유: 윈도우 기본(Windows PowerShell 5.1)은 프로필 스크립트 로딩을 막아 함수가 안 켜진다. `CurrentUser` 스코프라 관리자 권한은 불필요.
+   - 맥/리눅스: `echo "alias telegram='claude --channels plugin:telegram@claude-plugins-official --dangerously-skip-permissions'" >> ~/.zshrc` 후 `source ~/.zshrc` (bash면 `~/.bashrc`).
+③ **새 터미널 창**을 열고 `telegram` 을 입력해 claude가 채널과 함께 켜지는지 확인한다. 안 켜지면 → `references/manual-guide.md` 의 "별칭 트러블슈팅"(실행정책/프로필 경로).
+
+> ⚠️ **이 별칭은 `--dangerously-skip-permissions` 가 들어 있어 모든 도구 실행을 자동 승인한다**(폰에서 멈춤 없이 쓰기 위함). 편하지만, 폰/오발/프롬프트 인젝션 명령이 파일 삭제·임의 명령까지 자동 실행할 수 있다는 뜻이다 — 신뢰하는 본인 PC에서만 권장. **더 안전하게** 쓰려면 별칭에서 이 플래그만 빼면 된다: 텔레그램 플러그인은 민감 작업 때 폰으로 🔐 Allow/Deny 버튼을 보내는 권한 릴레이를 지원한다(v2.1.81+).
+
 ---
 
 ## 막힐 때 (증상 → 가장 흔한 원인 → 해결)
@@ -204,5 +223,7 @@ claude --channels plugin:telegram@claude-plugins-official
 ## 마무리
 
 연결이 끝나면 짧게 정리해 준다: "이 터미널 창을 열어두면 휴대폰에서 언제든 일을 시킬 수
-있어요. 창을 닫으면 연결이 끊기고, 다시 쓰려면 `claude --channels plugin:telegram@claude-plugins-official`
-로 켜면 돼요." 그룹/여러 사용자 등 고급 설정이 궁금하면 `references/manual-guide.md` 끝부분을 안내한다.
+있어요. 창을 닫으면 연결이 끊겨요." 다시 켜는 법은 **I단계에서 `telegram` 별칭을 만들었으면 그냥
+`telegram`**, 아니면 `claude --channels plugin:telegram@claude-plugins-official` 라고 안내한다.
+(아직 별칭을 안 만들었으면 I단계를 권한다.) 그룹/여러 사용자 등 고급 설정이 궁금하면
+`references/manual-guide.md` 끝부분을 안내한다.
