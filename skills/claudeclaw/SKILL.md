@@ -52,7 +52,7 @@ description: "텔레그램 봇을 지금 이 Claude Code 세션에 연결해 주
 2. **플러그인** 설치됨? — Read `~/.claude/plugins/installed_plugins.json` 에
    `telegram@claude-plugins-official` 있나
 3. **토큰** 등록됨? — Read `~/.claude/channels/telegram/.env` 에 `TELEGRAM_BOT_TOKEN=` 줄 있나 (값은 보지 않기)
-4. **이 세션이 채널 수신 중**? — 너 자신이 이름에 `telegram`+`reply`가 든 도구를 갖고 있나
+4. **채널 받는 터미널이 떠 있나**? — `~/.claude/channels/telegram/bot.pid` 가 있고 그 PID가 살아있나 (애매하면 F에서 봇이 코드를 주는지로 실증)
 5. **페어링** 됨? — Read `~/.claude/channels/telegram/access.json` 의 `allowFrom`이 비어있지 않나
 6. **보안 잠금**? — 같은 파일 `dmPolicy === "allowlist"`
 
@@ -67,7 +67,7 @@ description: "텔레그램 봇을 지금 이 Claude Code 세션에 연결해 주
 - Bun 없음 → **B**
 - 플러그인 없음 → **C**
 - 토큰 없음 → **A**(봇부터) → **D**
-- 토큰 있고 페어링 전: 채널 도구 없으면 → **E**(재시작), 있으면 → **F**(페어링)
+- 토큰 있고 페어링 전 → **E**(새 터미널에서 채널 켜기) → **F**(페어링). 새 터미널 채널이 이미 떠 있으면 바로 **F**.
 - 페어링 됨, 잠금 전 → **G**
 - 페어링·잠금 다 됨 → **H**(최종 확인) 또는 "이미 다 연결됐어요" 축하
 
@@ -79,9 +79,9 @@ description: "텔레그램 봇을 지금 이 Claude Code 세션에 연결해 주
 모든 단계를 한 번에 보여주지 말고, **지금 단계 하나**만 안내하고 결과를 기다린다.
 
 > **흐름 주의:** 한 단계가 끝나 확인되면 **같은 대화에서 바로 다음 단계로 이어간다**.
-> 수강생이 단계마다 `/claudeclaw`를 다시 칠 필요는 없다. **예외는 E단계뿐** — 거기서는
-> 세션이 종료되므로, 다시 켠 뒤 `/claudeclaw`를 한 번 더 실행하면 0단계 진단이 멈춘
-> 지점(F)부터 이어준다.
+> 수강생이 단계마다 `/claudeclaw`를 다시 칠 필요는 없다. (E단계도 *새 터미널*만 따로 열 뿐,
+> 이 창은 살아 있으니 그대로 이어서 진행한다.) 만약 중간에 이 창을 닫았더라도, 다시 켜고
+> `/claudeclaw`를 실행하면 0단계 진단이 멈춘 지점부터 이어준다.
 
 ### A. 텔레그램 봇 만들기 (휴대폰에서)
 
@@ -131,37 +131,42 @@ powershell -c "irm bun.sh/install.ps1 | iex"
 ```
    ⚠️ 이 명령이 **"Unknown command: /telegram:configure"** 로 나오면, 명령이 틀린 게 아니라
    C단계 플러그인이 아직 로드되지 않은 것이다. 순서대로: ① `/reload-plugins` 다시 실행 → 다시 시도,
-   ② 그래도면 Claude Code를 종료(`/exit`)했다 다시 켜고 `/claudeclaw` 재실행(0단계 진단이 D부터
+   ② 그래도 안 되면 Claude Code를 종료(`/exit`)했다 다시 켜고 `/claudeclaw` 재실행(0단계 진단이 D부터
    이어준다) → 다시 시도. (재시작하면 플러그인 명령이 확실히 등록된다.)
 ③ `~/.claude/channels/telegram/.env` 를 Read 해서 `TELEGRAM_BOT_TOKEN=` 줄이 생겼는지 확인(**값은 출력하지 않기**). 생겼으면 "토큰 등록 확인했어요" 라고 보고.
 
-### E. `--channels` 로 다시 켜기 (가장 중요 — 세션이 한 번 꺼져요)
+### E. 채널 받기 — **새 터미널을 하나 더 열어서** 켠다 (지금 이 창은 닫지 마세요)
 
-① "여기서 딱 한 번, 클로드를 특별한 방법으로 다시 켜요. 이걸 해야 텔레그램 메시지를 받을 수 있어요. **다시 켠 뒤 `/claudeclaw` 만 한 번 더 실행하면, 제가 이 자리에서 이어서 끝까지 도와드려요.** 그러니 안심하고 닫으셔도 돼요."
-② 먼저 지금 세션을 종료한다 — 입력창에 `/exit` 를 입력(또는 키보드로 **Ctrl+C 를 두 번**). 그다음 터미널(윈도우는 PowerShell)에서:
+① "이제 텔레그램 메시지를 받는 '귀'를 켤 거예요. **지금 이 창은 그대로 두세요.** 터미널 창을
+   하나 더 열어서 거기서 켜요 — 그래야 제가 여기서 계속 옆에서 도와드릴 수 있어요." 라고 안내한다.
+   (예전처럼 이 세션을 종료할 필요가 없다. 종료 후 명령을 다시 기억해 칠 필요도 없다.)
+② **새 터미널 창을 하나 더 연다**(윈도우: 시작 메뉴에서 PowerShell을 다시 실행). 원하는 작업
+   폴더가 있으면 `cd` 로 이동한 뒤, 아래 한 줄을 붙여넣어 실행하게 한다:
 ```
 claude --channels plugin:telegram@claude-plugins-official
 ```
-   (윈도우도 같은 명령. 이 터미널 창은 연동을 유지하려면 닫지 말고 열어두기.)
-③ 이건 세션을 종료시키므로 네가 즉시 확인할 수 없다. **재시작 후 `/claudeclaw`를 다시
-   실행하라**고 분명히 안내하고 마무리한다. (다음 실행 때 0단계 진단이 채널 활성과 페어링
-   여부를 보고 F로 이어간다.)
+   - 이 **새 창이 '텔레그램을 받는 창'**이다. 연동을 유지하려면 **닫지 말고 열어둔다.**
+   - 이미 I단계에서 `telegram` 별칭을 만들어 뒀다면, 새 창에서 그냥 `telegram` 한 단어면 된다.
+③ 새 창에 채널 수신 관련 메시지가 뜨면 켜진 것이다. **원래 창(이 대화)으로 돌아와 곧장 F로
+   이어서 진행**한다 — `/claudeclaw`를 다시 실행할 필요 없다.
+   - 참고: 너(claudeclaw)는 이 원래 창에 있어 새 창의 텔레그램 메시지를 직접 보지는 못한다.
+     그래도 페어링·잠금은 파일(`access.json`)로 확인할 수 있으니 그대로 진행한다.
 
-### F. 페어링 (내 휴대폰을 이 세션에 연결)
+### F. 페어링 (내 휴대폰 연결)
 
 ① "이제 봇에게 인사하면, 봇이 6자 코드(영문+숫자)를 줘요. 그 코드로 '이 사람이 주인이에요'를 등록해요."
 ② 수강생에게:
    1. 텔레그램에서 만든 봇을 찾아 아무 메시지나 보내기(예: `안녕`)
    2. 봇이 보내주는 **6자 코드**(영문+숫자, 예 `a4f91c`) 확인
-   3. 입력창에 직접:
+   3. **지금 이 창(원래 claudeclaw 창)** 입력창에 직접:
 ```
 /telegram:access pair 여기에_받은_6자코드
 ```
-   승인(Yes)이 뜨면 **Yes**.
+   승인(Yes)이 뜨면 **Yes**. (플러그인은 이 창에도 로드돼 있어 여기서 페어링하면 된다 — 새 창에서 할 필요 없음.)
 ③ `access.json` 을 Read 해서 `allowFrom` 에 항목이 새로 생겼는지 확인.
-   **봇이 코드를 안 주면** → 거의 항상 **E의 `--channels` 누락**이다. "지금 클로드를 켤 때
-   명령 끝에 `--channels plugin:telegram@claude-plugins-official` 를 붙였나요?"라고 묻고,
-   아니면 E로 되돌려 재시작을 안내한다.
+   **봇이 코드를 안 주면** → 거의 항상 **E에서 연 새 터미널의 `--channels` 세션이 안 떠 있거나
+   꺼진 것**이다. "새 창에서 `claude --channels plugin:telegram@claude-plugins-official` 가 실행
+   중인가요?"라고 묻고, 꺼졌으면 새 창에서 다시 실행하게 한 뒤 봇에 메시지를 다시 보내게 한다.
    ⚠️ `pair` 명령은 **수강생이 직접** 친다. 네가 대신 실행하지 않는다.
 
 ### G. 보안 잠금 (allowlist)
@@ -181,10 +186,11 @@ claude --channels plugin:telegram@claude-plugins-official
 ```
 안녕 클로드
 ```
-③ 그 메시지가 이 세션에 `<channel source="telegram" ...>` 알림으로 **도착하는지**로 확정한다.
-   도착하면 텔레그램으로 친근하게 답장(reply 도구)하고 **"연동 성공!"** 을 알린다.
-   이어서 실제 작업도 권한다: *"지금 폴더에 hello.txt 만들어줘 처럼 일도 시켜보세요."*
-   파일 상태가 다 맞아도 **이 왕복이 한 번 성공해야** 완료로 본다.
+③ 그 메시지는 **새 터미널(채널 받는 창)** 에 도착하고, 봇의 답장은 **수강생 휴대폰**으로 간다.
+   너(이 원래 창)는 그 메시지를 직접 보지 못하므로, 수강생에게 **"폰으로 답장 받으셨어요?"** 라고
+   물어 확인한다. 답장을 받았다고 하면 **"연동 성공!"**. (새 창에도 `<channel ...>` 알림이 떠 있다.)
+   이어서 실제 작업도 권한다: *"폰에서 '지금 폴더에 hello.txt 만들어줘' 처럼 일도 시켜보세요."*
+   파일 상태가 다 맞아도 **이 왕복(폰 답장)이 한 번 성공해야** 완료로 본다.
 
 ### I. (선택) 다음부터 한 단어로 켜기 — `telegram` 별칭
 
@@ -214,10 +220,10 @@ if (-not (Select-String -Path $PROFILE -Pattern 'function telegram' -Quiet)) {
 | `bun: command not found` | 설치 후 창을 안 새로 엶 → 터미널/PowerShell 완전히 닫고 새로 열기 |
 | 플러그인 "not found in any marketplace" | 처음이면 `/plugin marketplace add anthropics/claude-plugins-official`, 아니면 `/plugin marketplace update claude-plugins-official` 후 설치 재시도 (인터넷 확인) |
 | `Unknown command: /telegram:configure` (또는 `/telegram:access`) | 명령 오타가 아니라 플러그인 미로드 → `/reload-plugins` 실행, 그래도 안 되면 Claude Code 재시작 후 `/claudeclaw` 재실행. 그 전에 C단계(플러그인 설치)를 마쳤는지 확인 |
-| 봇이 페어링 코드를 안 줌 | **`--channels` 누락 1순위** → `/exit` 후 `claude --channels plugin:telegram@claude-plugins-official` 로 재시작, 그다음 봇에 메시지 다시 |
-| 봇이 "입력 중…"만 뜨고 답이 없음 | `--channels` 없이 켰거나 일시적 오류 → `--channels` 로 켰는지 확인 후 세션 재시작 |
+| 봇이 페어링 코드를 안 줌 | **새 터미널의 `--channels` 세션이 안 떠 있음이 1순위** → 새 창에서 `claude --channels plugin:telegram@claude-plugins-official` 가 실행 중인지 확인(꺼졌으면 다시 실행), 봇에 메시지 다시 |
+| 봇이 "입력 중…"만 뜨고 답이 없음 | 새 터미널의 `--channels` 세션이 꺼졌거나 일시 오류 → 새 창에서 다시 실행 |
 | `pair` 실패 | 코드 오타/만료 → 봇에 메시지 다시 보내 새 코드 받기 |
-| 페어링 후에도 메시지 안 옴 | 재시작 때 `--channels` 넣었는지 / 토큰 맞는지(`/telegram:configure` 재등록) 확인 |
+| 페어링 후에도 메시지 안 옴 | 새 터미널 `--channels` 세션이 떠 있는지 / 토큰 맞는지(`/telegram:configure` 재등록) 확인 |
 | 윈도우 방화벽/네트워크 팝업 | 처음 연결 시 뜨면 **허용** 선택 (별도 방화벽 설정은 불필요) |
 | **전부 맞게 했는데 끝까지 무응답** | ① `claude --version` 이 **v2.1.80 이상**인지(채널은 이 버전부터). 낮으면 업데이트 ② 채널은 점진 출시 중이라 아직 내 계정에 안 열렸을 수 있음 ③ **Pro/Max 개인은 추가 결제 불필요**, 회사(Team/Enterprise) 계정이면 관리자가 채널 기능을 켜야 함 |
 
@@ -227,8 +233,8 @@ if (-not (Select-String -Path $PROFILE -Pattern 'function telegram' -Quiet)) {
 
 ## 마무리
 
-연결이 끝나면 짧게 정리해 준다: "이 터미널 창을 열어두면 휴대폰에서 언제든 일을 시킬 수
-있어요. 창을 닫으면 연결이 끊겨요." 다시 켜는 법은 **I단계에서 `telegram` 별칭을 만들었으면 그냥
-`telegram`**, 아니면 `claude --channels plugin:telegram@claude-plugins-official` 라고 안내한다.
+연결이 끝나면 짧게 정리해 준다: "**텔레그램을 받는 그 새 터미널 창을 열어두면** 휴대폰에서
+언제든 일을 시킬 수 있어요. 그 창을 닫으면 연결이 끊겨요." 다음에 다시 켜는 법은 새 터미널에서 —
+**I단계에서 `telegram` 별칭을 만들었으면 그냥 `telegram`**, 아니면 `claude --channels plugin:telegram@claude-plugins-official`.
 (아직 별칭을 안 만들었으면 I단계를 권한다.) 그룹/여러 사용자 등 고급 설정이 궁금하면
 `references/manual-guide.md` 끝부분을 안내한다.

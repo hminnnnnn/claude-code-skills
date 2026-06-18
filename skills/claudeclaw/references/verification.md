@@ -21,7 +21,7 @@
 | 1 | Bun 설치 | Bash `bun --version` | 버전 문자열 출력 |
 | 2 | 플러그인 설치 | Read `~/.claude/plugins/installed_plugins.json` | `"telegram@claude-plugins-official"` 키 존재 |
 | 3 | 토큰 등록 | Read `~/.claude/channels/telegram/.env` | `TELEGRAM_BOT_TOKEN=` 줄 존재 (값은 보지 않음) |
-| 4 | 이 세션이 채널 수신 중인가 | **너 자신의 도구 목록 확인** | 이름에 `telegram` 과 `reply` 가 함께 들어간 도구를 너가 갖고 있으면 활성 |
+| 4 | 채널 받는 (별도) 터미널이 떠 있나 | Bash 로 `~/.claude/channels/telegram/bot.pid` 존재 + 그 PID 생존 확인 | 살아 있으면 채널 켜짐 (애매하면 F의 코드 수신으로 실증) |
 | 5 | 페어링 완료 | Read `~/.claude/channels/telegram/access.json` | `allowFrom` 배열이 비어있지 않음 |
 | 6 | 보안 잠금 | 같은 `access.json` | `dmPolicy === "allowlist"` |
 
@@ -41,16 +41,16 @@
 1. Bun ✗ → **B. Bun 설치**
 2. 플러그인 ✗ → **C. 플러그인 설치**
 3. 토큰 ✗ → **A. 봇 만들기 + D. 토큰 등록** (봇이 없으면 A부터)
-4. 토큰 ✓ · 페어링 ✗ → **세션 재시작 전인지 후인지로 분기:**
-   - 채널 도구 ✗ (4번 실패) → 아직 재시작 전 → **E. `--channels`로 재시작** 안내
-   - 채널 도구 ✓ → 재시작됨 → **F. 페어링** 진행
-   - 판단이 애매하면 수강생에게 직접 물어봄: *"방금 클로드를 켤 때 명령 끝에 `--channels plugin:telegram@claude-plugins-official` 를 붙였나요?"*
+4. 토큰 ✓ · 페어링 ✗ → **채널 받는 새 터미널이 떠 있는지로 분기:**
+   - 채널 터미널 ✗ (bot.pid 없음/죽음) → **E. 새 터미널에서 `--channels` 켜기** 안내 → 이어서 F
+   - 채널 터미널 ✓ → 바로 **F. 페어링** 진행
+   - 애매하면 수강생에게: *"새로 연 터미널에서 `claude --channels plugin:telegram@claude-plugins-official` 가 실행 중인가요?"*
 5. 페어링 ✓ · 잠금 ✗ → **G. 보안 잠금**
 6. 페어링 ✓ · 잠금 ✓ → **H. 최종 확인** (또는 이미 완료 축하)
 
-> **핵심 통찰:** 굳이 4번(채널 활성)을 완벽히 탐지하려 애쓰지 마세요. **페어링 단계 자체가
-> 채널 활성의 실증 테스트**입니다 — 봇이 6자 코드를 답장하면 채널이 살아있는 것이고,
-> 코드가 안 오면 거의 항상 `--channels` 누락입니다. 그쪽으로 안내하면 됩니다.
+> **핵심 통찰:** 굳이 4번(채널 터미널)을 완벽히 탐지하려 애쓰지 마세요. **페어링 단계 자체가
+> 채널 활성의 실증 테스트**입니다 — 봇이 6자 코드를 답장하면 새 터미널의 채널이 살아있는 것이고,
+> 코드가 안 오면 거의 항상 새 터미널의 `--channels` 세션이 안 떠 있는 것입니다. 그쪽으로 안내하면 됩니다.
 
 ---
 
@@ -64,14 +64,15 @@
 | B. Bun | `bun --version` | 버전 출력. 안 나오면: ① 터미널/PowerShell 새로 열기 ② (드물게) 윈도우에서 WSL+Git Bash 충돌이면 `references/manual-guide.md` 윈도우 섹션의 `CLAUDE_CODE_GIT_BASH_PATH` 안내 |
 | C. 플러그인 | `installed_plugins.json` 다시 Read | `telegram@claude-plugins-official` 등장. 단, 설치돼도 `/reload-plugins` 전에는 `/telegram:configure` 가 "Unknown command"다 → reload 필수, 안 되면 재시작 |
 | D. 토큰 | `.env` Read | `TELEGRAM_BOT_TOKEN=` 줄 등장 (값 비노출) |
-| E. 재시작 | (재실행된 세션에서) 너의 도구에 telegram reply 있나 | 있으면 채널 활성 |
+| E. 새 터미널 채널 | `bot.pid` 생존 / 새 창에 채널 수신 메시지 | 있으면 채널 켜짐 (실증은 F의 코드 수신) |
 | F. 페어링 | `access.json` Read | `allowFrom` 에 항목이 새로 생김 |
 | G. 잠금 | `access.json` Read | `dmPolicy` 가 `"allowlist"` |
-| H. 최종 | 수강생이 봇에 보낸 메시지가 `<channel source="telegram" ...>` 알림으로 도착 | 도착 = 진짜 성공 |
+| H. 최종 | 수강생이 폰에서 봇 답장을 받았는지(메시지는 새 터미널에 도착) | 폰 답장 받음 = 진짜 성공 |
 
 **H가 진짜 검증입니다.** 파일 상태가 다 맞아도, 실제 메시지 왕복이 한 번 성공해야
-"연동됐다"고 말할 수 있습니다. 수강생에게 봇으로 짧은 메시지를 보내게 하고, 그 알림이
-이 세션에 도착하는지로 확정하세요.
+"연동됐다"고 말할 수 있습니다. 단, 그 메시지는 **새 터미널(채널 창)** 에 도착하고 너(claudeclaw)는
+원래 창에 있어 직접 못 봅니다. 수강생에게 봇으로 짧은 메시지를 보내게 하고 **"폰으로 답장
+받으셨어요?"** 로 확정하세요.
 
 ---
 

@@ -108,23 +108,22 @@ bun --version
 
 ---
 
-## 4단계: `--channels` 플래그로 다시 켜기 (가장 중요)
+## 4단계: 채널 받기 — 새 터미널을 하나 더 열어서 켜기 (가장 중요)
 
 > 이 단계가 핵심입니다. `--channels` 없이 켜면 텔레그램 메시지를 **수신하지 못합니다.**
+> 예전처럼 세션을 종료하고 다시 켤 필요 없이, **터미널 창을 하나 더 열어서** 거기서 켜면
+> 지금 창은 그대로 살아 있어 더 매끄럽습니다(종료 후 명령을 다시 기억해 칠 필요도 없음).
 
-현재 세션을 종료합니다 — 입력창에 `/exit` 입력(또는 키보드로 **Ctrl+C 두 번**):
-
-```
-/exit
-```
-
-그런 다음 터미널(윈도우는 PowerShell)에서 채널 플래그를 붙여 다시 실행합니다:
+**새 터미널 창을 하나 더 엽니다**(윈도우: 시작 메뉴에서 PowerShell 다시 실행). 원하는 작업
+폴더가 있으면 `cd` 로 이동한 뒤, 채널 플래그를 붙여 실행합니다:
 
 ```sh
 claude --channels plugin:telegram@claude-plugins-official
 ```
 
-(Windows에서도 동일한 명령입니다.)
+- 이 **새 창이 '텔레그램을 받는 창'**입니다. 연동을 유지하려면 **닫지 말고 열어 두세요.**
+- 아래 "한 단어로 켜기" 섹션에서 `telegram` 별칭을 만들면, 다음부턴 새 창에서 그냥 `telegram` 한 단어면 됩니다.
+- (Windows / 맥 / 리눅스 동일 명령.)
 
 ---
 
@@ -140,7 +139,7 @@ claude --channels plugin:telegram@claude-plugins-official
 
    `a4f91c` 자리에 받은 코드를 넣으세요. 승인(Yes)이 뜨면 **Yes**.
 
-> **봇이 코드를 안 보내면** → 거의 항상 4단계의 `--channels` 플래그를 빠뜨린 경우입니다. 세션을 종료하고 `claude --channels plugin:telegram@claude-plugins-official` 로 다시 켰는지 확인하세요. 코드는 시간이 지나면 만료되니, 안 되면 봇에 메시지를 다시 보내 새 코드를 받으세요.
+> **봇이 코드를 안 보내면** → 거의 항상 4단계에서 연 **새 터미널의 `--channels` 세션이 안 떠 있는** 경우입니다. 새 창에서 `claude --channels plugin:telegram@claude-plugins-official` 가 실행 중인지 확인하세요(꺼졌으면 다시 실행). 코드는 시간이 지나면 만료되니, 안 되면 봇에 메시지를 다시 보내 새 코드를 받으세요.
 
 ---
 
@@ -166,7 +165,7 @@ claude --channels plugin:telegram@claude-plugins-official
 안녕 클로드
 ```
 
-Claude Code 터미널에 메시지가 도착하고 응답이 텔레그램으로 돌아오면 **연동 성공**입니다.
+메시지는 **4단계에서 연 새 터미널(채널 창)** 에 도착하고, 봇의 답장이 휴대폰으로 돌아오면 **연동 성공**입니다.
 
 실제 작업도 시켜보세요:
 
@@ -193,17 +192,17 @@ bun --version
 # 3. 토큰 등록
 /telegram:configure <봇토큰>
 
-# 4. 종료 후 채널 플래그로 재시작
-/exit
+# 4. 새 터미널을 하나 더 열어서 채널 켜기 (지금 창은 그대로 두기)
+#    (새 PowerShell 창에서 실행)
 claude --channels plugin:telegram@claude-plugins-official
 
-# 5. (텔레그램에서 봇에 메시지 → 6자 코드 수신) 후 입력창에서
+# 5. (텔레그램에서 봇에 메시지 → 6자 코드 수신) 후 원래 창 입력창에서
 /telegram:access pair <6자코드>
 
 # 6. 보안 잠금
 /telegram:access policy allowlist
 
-# 7. 텔레그램 봇에 "안녕 클로드" → 도착하면 성공
+# 7. 텔레그램 봇에 "안녕 클로드" → 폰으로 답장 오면 성공
 ```
 
 ---
@@ -215,9 +214,9 @@ claude --channels plugin:telegram@claude-plugins-official
 | `bun: command not found` | Bun 설치 후 터미널/PowerShell을 새로 열지 않음 → 창을 완전히 닫고 새로 열기 |
 | 플러그인 "not found in any marketplace" | 처음이면 `/plugin marketplace add anthropics/claude-plugins-official`, 아니면 `/plugin marketplace update claude-plugins-official` → 설치 재시도 (인터넷 확인) |
 | `Unknown command: /telegram:configure` (또는 `/telegram:access`) | 명령 오타가 아니라 플러그인 미로드 → `/reload-plugins` 실행, 안 되면 Claude Code 재시작. 2단계 설치를 마쳤는지도 확인 |
-| 봇이 페어링 코드를 안 줌 | `--channels` 플래그 누락이 1순위 → `/exit` 후 `claude --channels plugin:telegram@claude-plugins-official` 로 재시작. 그 다음 봇에 메시지 다시 |
+| 봇이 페어링 코드를 안 줌 | 새 터미널의 `--channels` 세션이 안 떠 있음이 1순위 → 새 창에서 `claude --channels plugin:telegram@claude-plugins-official` 가 실행 중인지 확인(꺼졌으면 다시 실행). 그 다음 봇에 메시지 다시 |
 | `/telegram:access pair` 실패 | 코드 오타 또는 만료 → 봇에 메시지 다시 보내 새 코드 받기 |
-| 페어링 후에도 메시지가 안 옴 | 재시작 시 `--channels` 플래그를 넣었는지 / 토큰이 맞는지(`/telegram:configure`로 재등록) 확인 |
+| 페어링 후에도 메시지가 안 옴 | 새 터미널의 `--channels` 세션이 떠 있는지 / 토큰이 맞는지(`/telegram:configure`로 재등록) 확인 |
 | 토큰 오류 | BotFather에서 `/token` 으로 재확인 후 `/telegram:configure` 로 다시 등록 |
 
 ---
