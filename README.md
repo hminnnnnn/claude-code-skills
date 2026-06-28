@@ -24,14 +24,18 @@
 
 ### 방법 1 — 플러그인 마켓플레이스 (권장)
 
-Claude Code 안에서 차례로 입력하세요:
+터미널을 따로 열 필요 없이, 실행 중인 Claude Code 세션 입력창에 차례로 입력하세요:
 
 ```
 /plugin marketplace add hminnnnnn/claude-code-skills
 /plugin install claudecode-channel@claude-code-skills
+/reload-plugins
 ```
 
-설치 후 `/claudecode-channel:telegram` 을 실행하면 안내가 시작됩니다.
+> ⚠️ **`/reload-plugins` 까지 실행해야** 스킬이 활성화됩니다. 설치만 하고 빼면
+> `/claudecode-channel:telegram` 가 잡히지 않습니다.
+
+그다음 `/claudecode-channel:telegram` 을 실행하면 안내가 시작됩니다.
 
 ### 방법 2 — 스킬 폴더에 직접 복사
 
