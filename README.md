@@ -15,7 +15,7 @@
 - 토큰 비노출·접근 권한은 사용자가 직접 설정 등 **보안 가드레일** 내장.
 
 > **Windows에서 Claude Code가 아직 없다면?** 먼저
-> [skills/telegram/references/windows-setup.md](skills/telegram/references/windows-setup.md)
+> [plugins/claudecode-channel/skills/telegram/references/windows-setup.md](plugins/claudecode-channel/skills/telegram/references/windows-setup.md)
 > 의 "0단계: 사전 준비"를 따라 Claude Code와 Bun을 설치하세요. 그 다음 아래 설치로 진행합니다.
 
 ---
@@ -35,14 +35,14 @@ Claude Code 안에서 차례로 입력하세요:
 
 ### 방법 2 — 스킬 폴더에 직접 복사
 
-이 저장소를 받은 뒤 `skills/telegram` 폴더를 개인 스킬 폴더에 복사합니다.
+이 저장소를 받은 뒤 `plugins/claudecode-channel/skills/telegram` 폴더를 개인 스킬 폴더에 복사합니다.
 
 - **Windows:** `%USERPROFILE%\.claude\skills\telegram\`
 - **macOS / Linux:** `~/.claude/skills/telegram/`
 
 ```bash
 git clone https://github.com/hminnnnnn/claude-code-skills.git
-cp -R claude-code-skills/skills/telegram ~/.claude/skills/telegram
+cp -R claude-code-skills/plugins/claudecode-channel/skills/telegram ~/.claude/skills/telegram
 ```
 
 Claude Code를 다시 실행하면 `/telegram` 으로 사용할 수 있습니다. (마켓플레이스로 설치하면
@@ -59,7 +59,7 @@ Claude Code를 다시 실행하면 `/telegram` 으로 사용할 수 있습니다
 Claude가 현재 상태를 점검한 뒤, 봇 생성(BotFather) → 플러그인 설치 → 토큰 등록 →
 받는 창(`--channels`) 켜기 → 페어링 → 보안 잠금 → 최종 확인 순서로 안내합니다. 가이드만 따라가면 됩니다.
 
-빠른 명령 요약·트러블슈팅은 [skills/telegram/references/manual-guide.md](skills/telegram/references/manual-guide.md) 에 있습니다.
+빠른 명령 요약·트러블슈팅은 [plugins/claudecode-channel/skills/telegram/references/manual-guide.md](plugins/claudecode-channel/skills/telegram/references/manual-guide.md) 에 있습니다.
 
 ---
 
