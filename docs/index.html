@@ -362,28 +362,20 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap}
     <!-- PREP -->
     <section class="block" id="prep">
       <h2><span class="kr">03</span> 사전 준비물</h2>
-      <p class="sub">시작 전 이 네 가지가 필요해요. 하나라도 없으면 그 부분부터 채우면 돼요.</p>
+      <p class="sub">미리 챙길 건 <b>Claude Code CLI 하나</b>예요. 나머지는 스킬을 실행하면 알아서 점검하고 한 단계씩 진행해줘요.</p>
       <div class="reqs">
         <div class="req">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
-          <div><h4>Claude Code v2.1.80+</h4><p>채널은 이 버전부터 지원돼요. <code>claude --version</code> 으로 확인하고 낮으면 업데이트. (🔐 권한 릴레이는 v2.1.81+)</p></div>
+          <div><h4>Claude Code CLI (v2.1.80+)</h4><p>이미 설치·로그인돼 있으면 끝이에요. <code>claude --version</code> 으로 확인하고 낮으면 업데이트. (🔐 권한 릴레이는 v2.1.81+) 아직 없다면 <a href="https://docs.claude.com/en/docs/claude-code/setup" target="_blank" rel="noopener">설치 가이드</a>부터.</p></div>
         </div>
-        <div class="req">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5Z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>
-          <div><h4>로그인된 계정</h4><p>Pro/Max 개인은 추가 결제 없이 가능. 회사(Team/Enterprise)는 관리자가 채널 기능을 켜야 할 수 있어요.</p></div>
-        </div>
-        <div class="req">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>
-          <div><h4>Bun 런타임</h4><p>텔레그램 플러그인 서버가 Bun에서 돌아가요. 아래 4단계 연동의 ②에서 설치해요.</p></div>
-        </div>
-        <div class="req">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3 2 11l6 2 2 6 4-5 5 4Z"/></svg>
-          <div><h4>텔레그램 앱 + 계정</h4><p>휴대폰 또는 데스크톱. 봇 생성(BotFather)에 필요해요.</p></div>
-        </div>
+      </div>
+      <div class="note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <div><b>아래는 스킬이 알아서 점검·진행해요 — 미리 준비 안 해도 돼요.</b> <b>Bun 런타임</b>(없으면 연동 중 설치 안내), <b>텔레그램 앱·봇</b>(BotFather로 봇 만드는 과정을 같이 진행), <b>페어링·접근 설정</b>까지. 빠진 게 있으면 그 단계에서 멈춰 채워줘요.</div>
       </div>
       <div class="note warn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.2 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.2a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
-        <div>윈도우에서 <b>Claude Code 자체가 아직 없다면</b>, 먼저 저장소의 <code>references/windows-setup.md</code> "0단계: 사전 준비"로 Claude Code와 Bun 설치를 끝낸 뒤 돌아오세요.</div>
+        <div>윈도우에서 <b>Claude Code 자체가 아직 없다면</b>, 먼저 저장소의 <code>references/windows-setup.md</code> "0단계: 사전 준비"로 Claude Code 설치를 끝낸 뒤 돌아오세요.</div>
       </div>
     </section>
 
