@@ -10,12 +10,12 @@
   },
   "plugins": [
     {
-      "name": "claudeclaw",
+      "name": "claudecode-channel",
       "description": "텔레그램 봇을 Claude Code 세션에 연결하는 대화형 설치 도우미. 비개발자·Windows 초보도 한 단계씩 따라 연동 완료. Connect a Telegram bot to your Claude Code session with a guided, resumable walkthrough.",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/claudeclaw"
+        "./skills/telegram"
       ]
     }
   ]

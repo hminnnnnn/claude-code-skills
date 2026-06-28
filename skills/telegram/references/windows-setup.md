@@ -1,7 +1,7 @@
 # 0단계: 윈도우 사전 준비 — 아무것도 없는 상태에서 Claude Code 준비하기
 
 > 이 문서는 **Claude Code 자체가 아직 없는 윈도우 사용자**를 위한 "0단계"입니다.
-> 여기까지 끝내면 `claude` 가 실행되고 `/claudeclaw` 같은 스킬을 쓸 수 있어요.
+> 여기까지 끝내면 `claude` 가 실행되고 `/claudecode-channel:telegram` 같은 스킬을 쓸 수 있어요.
 > 명령·요구사항은 공식 문서(code.claude.com/docs)로 검증했습니다. (2026-06 기준)
 
 > **스킬은 따로 "설치"하지 않아요.** `claude` 를 켜고 입력창에 `/` 를 치면 사용할 수 있는
@@ -78,9 +78,9 @@ claude
 
 ---
 
-## claudeclaw(텔레그램 연동)를 쓰려면 — 추가 준비물
+## 텔레그램 연동(`/claudecode-channel:telegram`)을 쓰려면 — 추가 준비물
 
-위 1~7번은 Claude Code 자체 준비입니다. **텔레그램 봇 연동(`/claudeclaw`)** 까지 하려면
+위 1~7번은 Claude Code 자체 준비입니다. **텔레그램 봇 연동(`/claudecode-channel:telegram`)** 까지 하려면
 플러그인 서버 런타임인 **Bun**이 하나 더 필요합니다. (Bun은 Claude Code 자체의 필수 요소는
 아니고, 텔레그램 플러그인이 Bun에서 돌기 때문입니다.)
 
@@ -96,7 +96,7 @@ bun --version
 활성화되고(없으면 PowerShell 도구로 동작), 다운로드는 `https://git-scm.com/downloads/win` 에서
 받아 GUI 설치 마법사를 따라가면 됩니다.
 
-준비가 끝나면 `/claudeclaw` 를 실행하세요. 나머지는 스킬이 한 단계씩 안내합니다.
+준비가 끝나면 `/claudecode-channel:telegram` 을 실행하세요. 나머지는 스킬이 한 단계씩 안내합니다.
 
 ---
 
@@ -107,6 +107,6 @@ bun --version
 | `'irm' 은(는) ... 인식되지 않습니다` | CMD에서 실행함 → **PowerShell**(`PS` 로 시작하는 창)에서 다시 |
 | `claude` 를 찾을 수 없음 (`command not found`) | 설치 후 창을 안 새로 엶 → PowerShell을 **완전히 닫고 새 창**에서 `claude --version` 다시 |
 | 로그인 후 "플랜이 없다"는 안내 | 무료 Claude.ai 플랜은 Claude Code 미포함 → Pro/Max/Team/Enterprise 구독 또는 Console(API 크레딧) 계정으로 로그인 |
-| `bun` 을 찾을 수 없음 | Bun 설치 후 PowerShell 새 창에서 다시 (claudeclaw 진행 시에만 필요) |
+| `bun` 을 찾을 수 없음 | Bun 설치 후 PowerShell 새 창에서 다시 (텔레그램 연동 진행 시에만 필요) |
 
 > 자동 업데이트는 네이티브 설치에서 백그라운드로 동작하므로, 평소 따로 업데이트할 필요는 없습니다.
